@@ -1,0 +1,622 @@
+library(terra)
+library(imageRy)
+
+
+#### NDSI (Indice copertura nevosa) ####
+
+wd_ndsi <- setwd("C:/Users/alber/Documents/Uni/Da fare/Tele/Progetto/NDSI_DICEMBRE")
+
+### ANALISI INVERNALE ANNO 2017 - 2019(20) - 2021 - 2023 ###
+
+wd_ndsi
+
+### 24_12_2017 ###
+
+b2_17 <- rast("NDSI_24_12_2017/2017-12-24-00_00_2017-12-24-23_59_Sentinel-2_L2A_B02_(Raw).tiff")
+b3_17 <- rast("NDSI_24_12_2017/2017-12-24-00_00_2017-12-24-23_59_Sentinel-2_L2A_B03_(Raw).tiff")
+b4_17 <- rast("NDSI_24_12_2017/2017-12-24-00_00_2017-12-24-23_59_Sentinel-2_L2A_B04_(Raw).tiff")
+b11_17 <- rast("NDSI_24_12_2017/2017-12-24-00_00_2017-12-24-23_59_Sentinel-2_L2A_B11_(Raw).tiff")
+
+### 08_01_2020 ###
+
+b2_20 <- rast("NDSI_8_1_2020/2020-01-08-00_00_2020-01-08-23_59_Sentinel-2_L2A_B02_(Raw).tiff")
+b3_20 <- rast("NDSI_8_1_2020/2020-01-08-00_00_2020-01-08-23_59_Sentinel-2_L2A_B03_(Raw).tiff")
+b4_20 <- rast("NDSI_8_1_2020/2020-01-08-00_00_2020-01-08-23_59_Sentinel-2_L2A_B04_(Raw).tiff")
+b11_20 <- rast("NDSI_8_1_2020/2020-01-08-00_00_2020-01-08-23_59_Sentinel-2_L2A_B11_(Raw).tiff")
+
+### 13_12_2021 ###
+
+b2_21 <- rast("NDSI_13_12_2021/2021-12-13-00_00_2021-12-13-23_59_Sentinel-2_L2A_B02_(Raw).tiff")
+b3_21 <- rast("NDSI_13_12_2021/2021-12-13-00_00_2021-12-13-23_59_Sentinel-2_L2A_B03_(Raw).tiff")
+b4_21 <- rast("NDSI_13_12_2021/2021-12-13-00_00_2021-12-13-23_59_Sentinel-2_L2A_B04_(Raw).tiff")
+b11_21 <- rast("NDSI_13_12_2021/2021-12-13-00_00_2021-12-13-23_59_Sentinel-2_L2A_B11_(Raw).tiff")
+
+### 23_12_2023 ###
+
+b2_23 <- rast("NDSI_23_12_2023/2023-12-23-00_00_2023-12-23-23_59_Sentinel-2_L2A_B02_(Raw).tiff")
+b3_23 <- rast("NDSI_23_12_2023/2023-12-23-00_00_2023-12-23-23_59_Sentinel-2_L2A_B03_(Raw).tiff")
+b4_23 <- rast("NDSI_23_12_2023/2023-12-23-00_00_2023-12-23-23_59_Sentinel-2_L2A_B04_(Raw).tiff")
+b11_23 <- rast("NDSI_23_12_2023/2023-12-23-00_00_2023-12-23-23_59_Sentinel-2_L2A_B11_(Raw).tiff")
+
+### TRUE COLOR DA ASSOCIAZIONE DI BANDE rosso = b4, verde = b3, blu = b2 ###
+
+#2017#
+
+true_color_2017 <- c(b4_17,b3_17,b2_17)
+tc_17 <- plotRGB(true_color_2017, 1, 2, 3, main = "True_Color_24_12_17_BU")
+
+#2020#
+
+true_color_2020 <- c(b4_20,b3_20,b2_20)
+tc_20 <- plotRGB(true_color_2020, 1, 2, 3, main = "True_Color_08_01_20_BU")
+
+#2021#
+
+true_color_2021 <- c(b4_21,b3_21,b2_21)
+tc_21 <- plotRGB(true_color_2021, 1, 2, 3, main = "True_Color_13_12_21_BU")
+
+#2023#
+true_color_2023 <- c(b4_23,b3_23,b2_23)
+tc_23 <- plotRGB(true_color_2023, 1, 2, 3, main = "True_Color_23_12_23_BU")
+
+
+par(mfrow=c(2,2), oma=c(3,3,3,3))
+tc_17 <- plotRGB(true_color_2017, 1, 2, 3, main = "True_Color_24_12_17_BU")
+tc_20 <- plotRGB(true_color_2020, 1, 2, 3, main = "True_Color_08_01_20_BU")
+tc_21 <- plotRGB(true_color_2021, 1, 2, 3, main = "True_Color_13_12_21_BU")
+tc_23 <- plotRGB(true_color_2023, 1, 2, 3, main = "True_Color_23_12_23_BU")
+
+dev.off()
+
+### NDSI 1 = NEVE/GHIACCIO , 0 = SUOLO  VEG, -1 = ACQUA O SIMILI ###
+
+## Palette colori ##
+
+col_ndsi <- colorRampPalette(c("black", "brown", "grey", "white")) (100)
+
+### 2017 ###
+ndsi_2017 <- (b3_17 - b11_17) / (b3_17 + b11_17)
+plot(ndsi_2017, col = cl, main = "NDSI 2017")
+
+### 2020 ###
+ndsi_2020 <- (b3_20 - b11_20) / (b3_20 + b11_20)
+plot(ndsi_2020, col = cl, main = "NDSI 2020")
+
+### 2021 ###
+ndsi_2021 <- (b3_21 - b11_21) / (b3_21 + b11_21)
+plot(ndsi_2021, col = cl, main = "NDSI 2021")
+
+### 2023 ###
+
+ndsi_2023 <- (b3_23 - b11_23) / (b3_23 + b11_23)
+plot(ndsi_2023, col = cl, main = "NDSI 2023")
+
+par(mfrow=c(2,2), oma=c(3,3,3,3))
+plot(ndsi_2017, col = cl, main = "NDSI 2017")
+plot(ndsi_2020, col = cl, main = "NDSI 2020")
+plot(ndsi_2021, col = cl, main = "NDSI 2021")
+plot(ndsi_2023, col = cl, main = "NDSI 2023")
+
+dev.off()
+
+#### FINE NDSI (Indice copertura nevosa) ####
+
+
+
+#### NDVI (Indice normalizzato Copertura Vegetazionale) ESTIVO ####
+
+wd_ndvi_g <- setwd("C:/Users/alber/Documents/Uni/Da fare/Tele/Progetto/NDVI_GIUGNO")
+
+### GIUGNO (estivo) ###
+
+wd_ndvi_g
+
+### 02_06_2017 ###
+
+b2_17_ndvi <- rast("NDVI_2_6_2017/2017-06-02-00_00_2017-06-02-23_59_Sentinel-2_L2A_B02_(Raw).tiff")
+b3_17_ndvi <- rast("NDVI_2_6_2017/2017-06-02-00_00_2017-06-02-23_59_Sentinel-2_L2A_B03_(Raw).tiff")
+b4_17_ndvi <- rast("NDVI_2_6_2017/2017-06-02-00_00_2017-06-02-23_59_Sentinel-2_L2A_B04_(Raw).tiff")
+b8_17_ndvi <- rast("NDVI_2_6_2017/2017-06-02-00_00_2017-06-02-23_59_Sentinel-2_L2A_B08_(Raw).tiff")
+
+### 07_06_2019 ###
+
+b2_19_ndvi <- rast("NDVI_7_6_2019/2019-06-07-00_00_2019-06-07-23_59_Sentinel-2_L2A_B02_(Raw).tiff")
+b3_19_ndvi <- rast("NDVI_7_6_2019/2019-06-07-00_00_2019-06-07-23_59_Sentinel-2_L2A_B03_(Raw).tiff")
+b4_19_ndvi <- rast("NDVI_7_6_2019/2019-06-07-00_00_2019-06-07-23_59_Sentinel-2_L2A_B04_(Raw).tiff")
+b8_19_ndvi <- rast("NDVI_7_6_2019/2019-06-07-00_00_2019-06-07-23_59_Sentinel-2_L2A_B08_(Raw).tiff")
+
+
+### 21_06_2021 ###
+
+b2_21_ndvi <- rast("NDVI_26_6_2021/2021-06-26-00_00_2021-06-26-23_59_Sentinel-2_L2A_B02_(Raw).tiff")
+b3_21_ndvi <- rast("NDVI_26_6_2021/2021-06-26-00_00_2021-06-26-23_59_Sentinel-2_L2A_B03_(Raw).tiff")
+b4_21_ndvi <- rast("NDVI_26_6_2021/2021-06-26-00_00_2021-06-26-23_59_Sentinel-2_L2A_B04_(Raw).tiff")
+b8_21_ndvi <- rast("NDVI_26_6_2021/2021-06-26-00_00_2021-06-26-23_59_Sentinel-2_L2A_B08_(Raw).tiff")
+
+### 21_06_2023 ###
+
+b2_23_ndvi <- rast("NDVI_21_6_2023/2023-06-21-00_00_2023-06-21-23_59_Sentinel-2_L2A_B02_(Raw).tiff")
+b3_23_ndvi <- rast("NDVI_21_6_2023/2023-06-21-00_00_2023-06-21-23_59_Sentinel-2_L2A_B03_(Raw).tiff")
+b4_23_ndvi <- rast("NDVI_21_6_2023/2023-06-21-00_00_2023-06-21-23_59_Sentinel-2_L2A_B04_(Raw).tiff")
+b8_23_ndvi <- rast("NDVI_21_6_2023/2023-06-21-00_00_2023-06-21-23_59_Sentinel-2_L2A_B08_(Raw).tiff")
+
+### TRUE COLOR DA ASSOCIAZIONE DI BANDE rosso = b4, verde = b3, blu = b2 ###
+
+#2017#
+
+tc_17_ndvi_g <- c(b4_17_ndvi,b3_17_ndvi,b2_17_ndvi)
+plot_tc_17_g <- plotRGB(tc_17_ndvi_g, 1, 2, 3, main = "True_Color_02_06_17_BU")
+
+#2019#
+
+tc_19_ndvi_g <- c(b4_19_ndvi,b3_19_ndvi,b2_19_ndvi)
+plot_tc_19_g <- plotRGB(tc_19_ndvi_g, 1, 2, 3, main = "True_Color_07_06_19_BU")
+
+#2021#
+
+tc_21_ndvi_g <- c(b4_21_ndvi,b3_21_ndvi,b2_21_ndvi)
+plot_tc_21_g <- plotRGB(tc_21_ndvi_g, 1, 2, 3, main = "True_Color_21_06_21_BU")
+
+#2023#
+
+tc_23_ndvi_g <- c(b4_23_ndvi,b3_23_ndvi,b2_23_ndvi)
+plot_tc_23_g <- plotRGB(tc_23_ndvi_g, 1, 2, 3, main = "True_Color_26_06_23_BU")
+
+
+### CONFRONTO TRUE COLOR ###
+par(mfrow=c(2,2), oma=c(3,3,3,3))
+plot_tc_17_g <- plotRGB(tc_17_ndvi_g, 1, 2, 3, main = "True_Color_02_06_17_BU")
+plot_tc_19_g <- plotRGB(tc_19_ndvi_g, 1, 2, 3, main = "True_Color_07_06_19_BU")
+plot_tc_21_g <- plotRGB(tc_21_ndvi_g, 1, 2, 3, main = "True_Color_21_06_21_BU")
+plot_tc_23_g <- plotRGB(tc_23_ndvi_g, 1, 2, 3, main = "True_Color_26_06_23_BU")
+
+
+
+dev.off()
+
+
+
+### NDVI 1 = temperate/tropicali ; 0.2 - 0.4 = shrub/grassland ; -0.1 - 0.1 = roccia, sabbia, neve ; -1 = acqua ###
+
+## Palette colori ##
+
+col_ndvi <- colorRampPalette(c("black", "brown", "green", "darkgreen")) (100)
+
+### 2017 ###
+ndvi_2017_g <- (b8_17_ndvi - b4_17_ndvi) / (b8_17_ndvi + b4_17_ndvi)
+plot(ndvi_2017_g, col = col_ndvi, main = "NDVI 2017 Giugno")
+
+### 2019 ###
+
+ndvi_2019_g <- (b8_19_ndvi - b4_19_ndvi) / (b8_19_ndvi + b4_19_ndvi)
+plot(ndvi_2019_g, col = col_ndvi, main = "NDVI 2019 Giugno")
+
+### 2021 ###
+
+ndvi_2021_g <- (b8_21_ndvi - b4_21_ndvi) / (b8_21_ndvi + b4_21_ndvi)
+plot(ndvi_2021_g, col = col_ndvi, main = "NDVI 2021 Giugno")
+
+### 2023 ###
+
+ndvi_2023_g <- (b8_23_ndvi - b4_23_ndvi) / (b8_23_ndvi + b4_23_ndvi)
+plot(ndvi_2023_g, col = col_ndvi, main = "NDVI 2023 Giugno")
+
+
+### CONFRONTO NDVI ESTATE ###
+par(mfrow=c(2,2), oma=c(3,3,3,3))
+plot(ndvi_2017_g, col = col_ndvi, main = "NDVI 2017")
+plot(ndvi_2019_g, col = col_ndvi, main = "NDVI 2019")
+plot(ndvi_2021_g, col = col_ndvi, main = "NDVI 2021")
+plot(ndvi_2023_g, col = col_ndvi, main = "NDVI 2023")
+
+dev.off()
+
+#### FINE NDVI ESTIVO ####
+
+#### NDMI ESTIVO ####
+
+wd_ndmi_g <- setwd("C:/Users/alber/Documents/Uni/Da fare/Tele/Progetto/NDMI_GIUGNO")
+
+### GIUGNO ###
+
+wd_ndmi_g
+
+#2017#
+b8a_17_g <- rast("NDMI_2_6_17/2017-06-02-00_00_2017-06-02-23_59_Sentinel-2_L2A_B8A_(Raw).tiff")
+b11_17_g <- rast("NDMI_2_6_17/2017-06-02-00_00_2017-06-02-23_59_Sentinel-2_L2A_B11_(Raw).tiff")
+
+#2019#
+b8a_19_g <- rast("NDMI_7_6_19/2019-06-07-00_00_2019-06-07-23_59_Sentinel-2_L2A_B8A_(Raw).tiff")
+b11_19_g <- rast("NDMI_7_6_19/2019-06-07-00_00_2019-06-07-23_59_Sentinel-2_L2A_B11_(Raw).tiff")
+
+#2021#
+b8a_21_g <- rast("NDMI_26_6_21/2021-06-26-00_00_2021-06-26-23_59_Sentinel-2_L2A_B8A_(Raw).tiff")
+b11_21_g <- rast("NDMI_26_6_21/2021-06-26-00_00_2021-06-26-23_59_Sentinel-2_L2A_B11_(Raw).tiff")
+
+#2023#
+b8a_23_g <- rast("NDMI_21_6_23/2023-06-21-00_00_2023-06-21-23_59_Sentinel-2_L2A_B8A_(Raw).tiff")
+b11_23_g <- rast("NDMI_21_6_23/2023-06-21-00_00_2023-06-21-23_59_Sentinel-2_L2A_B11_(Raw).tiff")
+
+#NDMI#
+ndmi_2017_g <- (b8a_17_g - b11_17_g) / (b8a_17_g + b11_17_g)
+ndmi_2019_g <- (b8a_19_g - b11_19_g) / (b8a_19_g + b11_19_g)
+ndmi_2021_g <- (b8a_21_g - b11_21_g) / (b8a_21_g + b11_21_g)
+ndmi_2023_g <- (b8a_23_g - b11_23_g) / (b8a_23_g + b11_23_g)
+
+#CONFRONTO#
+par(mfrow= c(2,2))
+plot(ndmi_2017_g, col = col_ndmi, main = " NDMI 2017 GIUGNO")
+plot(ndmi_2019_g, col = col_ndmi, main = " NDMI 2019 GIUGNO")
+plot(ndmi_2021_g, col = col_ndmi, main = " NDMI 2021 GIUGNO")
+plot(ndmi_2023_g, col = col_ndmi, main = " NDMI 2023 GIUGNO")
+
+# confrontando ad occhio pare che lo stress negli anni diminuisca ma il dato da tener conto è che si parla di valori max a 0.4 ovvero in pieno stress
+# o tendente allo stress idrico, non mi figuro una stabilità idrica nel suolo, mi pare sempre un sistema tendente all'instabilità
+# potrebbe darsi che nel 2023 a giugno sia piovuto particolarmente o proprio in quella occasione
+# DA APPROFONDIRE
+
+#### ANALISI TRANSIZIONE INVERNO - ESTATE ####
+
+
+wd_ndvi_a <- setwd("C:/Users/alber/Documents/Uni/Da fare/Tele/Progetto/NDVI_APRILE")
+
+### APRILE (primaverile) ###
+
+wd_ndvi_a
+
+### 03_04_2017 ###
+
+b2_17_ndvi_a <- rast("NDVI_3_4_2017/2017-04-03-00_00_2017-04-03-23_59_Sentinel-2_L2A_B02_(Raw).tiff")
+b3_17_ndvi_a <- rast("NDVI_3_4_2017/2017-04-03-00_00_2017-04-03-23_59_Sentinel-2_L2A_B03_(Raw).tiff")
+b4_17_ndvi_a <- rast("NDVI_3_4_2017/2017-04-03-00_00_2017-04-03-23_59_Sentinel-2_L2A_B04_(Raw).tiff")
+b8_17_ndvi_a <- rast("NDVI_3_4_2017/2017-04-03-00_00_2017-04-03-23_59_Sentinel-2_L2A_B08_(Raw).tiff")
+
+### 03_04_2019 ###
+
+b2_19_ndvi_a <- rast("NDVI_3_4_2019/2019-04-03-00_00_2019-04-03-23_59_Sentinel-2_L2A_B02_(Raw).tiff")
+b3_19_ndvi_a <- rast("NDVI_3_4_2019/2019-04-03-00_00_2019-04-03-23_59_Sentinel-2_L2A_B03_(Raw).tiff")
+b4_19_ndvi_a <- rast("NDVI_3_4_2019/2019-04-03-00_00_2019-04-03-23_59_Sentinel-2_L2A_B04_(Raw).tiff")
+b8_19_ndvi_a <- rast("NDVI_3_4_2019/2019-04-03-00_00_2019-04-03-23_59_Sentinel-2_L2A_B08_(Raw).tiff")
+
+
+### 07_04_2021 ###
+
+b2_21_ndvi_a <- rast("NDVI_7_4_2021/2021-04-07-00_00_2021-04-07-23_59_Sentinel-2_L2A_B02_(Raw).tiff")
+b3_21_ndvi_a <- rast("NDVI_7_4_2021/2021-04-07-00_00_2021-04-07-23_59_Sentinel-2_L2A_B03_(Raw).tiff")
+b4_21_ndvi_a <- rast("NDVI_7_4_2021/2021-04-07-00_00_2021-04-07-23_59_Sentinel-2_L2A_B04_(Raw).tiff")
+b8_21_ndvi_a <- rast("NDVI_7_4_2021/2021-04-07-00_00_2021-04-07-23_59_Sentinel-2_L2A_B08_(Raw).tiff")
+
+### 12_04_2023 ###
+
+b2_23_ndvi_a <- rast("NDVI_12_4_2023/2023-04-12-00_00_2023-04-12-23_59_Sentinel-2_L2A_B02_(Raw).tiff")
+b3_23_ndvi_a <- rast("NDVI_12_4_2023/2023-04-12-00_00_2023-04-12-23_59_Sentinel-2_L2A_B03_(Raw).tiff")
+b4_23_ndvi_a <- rast("NDVI_12_4_2023/2023-04-12-00_00_2023-04-12-23_59_Sentinel-2_L2A_B04_(Raw).tiff")
+b8_23_ndvi_a <- rast("NDVI_12_4_2023/2023-04-12-00_00_2023-04-12-23_59_Sentinel-2_L2A_B08_(Raw).tiff")
+
+### TRUE COLOR DA ASSOCIAZIONE DI BANDE rosso = b4, verde = b3, blu = b2 ###
+
+# Funzione per stretchare i valori tra 1 e 255
+stretch <- function(raster_band) {
+  min_val <- min(raster_band[], na.rm = TRUE)
+  max_val <- max(raster_band[], na.rm = TRUE)
+  stretched_band <- (raster_band - min_val) / (max_val - min_val) * 255
+  return(stretched_band)
+}
+
+
+#2017#
+
+# Stretching delle bande per il 2017
+b4_17_ndvi_a_stretch <- stretch(b4_17_ndvi_a)
+b3_17_ndvi_a_stretch <- stretch(b3_17_ndvi_a)
+b2_17_ndvi_a_stretch <- stretch(b2_17_ndvi_a)
+
+# Creare un oggetto SpatRasterStack con le bande stretchate
+tc_17_ndvi_a_stretch <- c(b4_17_ndvi_a_stretch, b3_17_ndvi_a_stretch, b2_17_ndvi_a_stretch)
+
+# Plot RGB con le bande stretchate
+plot_tc_17_a <- plotRGB(tc_17_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True_Color_03_04_17_BU")
+
+#2019#
+
+# Stretching delle bande per il 2019
+b4_19_ndvi_a_stretch <- stretch(b4_19_ndvi_a)
+b3_19_ndvi_a_stretch <- stretch(b3_19_ndvi_a)
+b2_19_ndvi_a_stretch <- stretch(b2_19_ndvi_a)
+
+# Creare un oggetto SpatRasterStack con le bande stretchate
+tc_19_ndvi_a_stretch <- c(b4_19_ndvi_a_stretch, b3_19_ndvi_a_stretch, b2_19_ndvi_a_stretch)
+
+# Plot RGB con le bande stretchate
+plot_tc_19_a <- plotRGB(tc_19_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True_Color_03_04_19_BU")
+
+
+#2021#
+
+# Stretching delle bande per il 2021
+b4_21_ndvi_a_stretch <- stretch(b4_21_ndvi_a)
+b3_21_ndvi_a_stretch <- stretch(b3_21_ndvi_a)
+b2_21_ndvi_a_stretch <- stretch(b2_21_ndvi_a)
+
+# Creare un oggetto SpatRasterStack con le bande stretchate
+tc_21_ndvi_a_stretch <- c(b4_21_ndvi_a_stretch, b3_21_ndvi_a_stretch, b2_21_ndvi_a_stretch)
+
+# Plot RGB con le bande stretchate
+plot_tc_21_a <- plotRGB(tc_21_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True_Color_07_04_21_BU")
+
+
+#2023#
+
+# Stretching delle bande per il 2023
+b4_23_ndvi_a_stretch <- stretch(b4_23_ndvi_a)
+b3_23_ndvi_a_stretch <- stretch(b3_23_ndvi_a)
+b2_23_ndvi_a_stretch <- stretch(b2_23_ndvi_a)
+
+# Creare un oggetto SpatRasterStack con le bande stretchate
+tc_23_ndvi_a_stretch <- c(b4_23_ndvi_a_stretch, b3_23_ndvi_a_stretch, b2_23_ndvi_a_stretch)
+
+# Plot RGB con le bande stretchate
+plot_tc_23_a <- plotRGB(tc_23_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True_Color_07_04_21_BU")
+
+### CONFRONTO TRUE COLOR APRILE
+
+par(mfrow=c(2,2), oma=c(3,3,3,3))
+
+plot_tc_17_a <- plotRGB(tc_17_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True_Color_03_04_17_BU")
+plot_tc_19_a <- plotRGB(tc_19_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True_Color_03_04_19_BU")
+plot_tc_21_a <- plotRGB(tc_21_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True_Color_07_04_21_BU")
+plot_tc_23_a <- plotRGB(tc_23_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True_Color_07_04_21_BU")
+
+
+
+dev.off()
+
+
+#### NDVI PERIODO PRIMAVERILE #### 
+### NDVI 1 = temperate/tropicali ; 0.2 - 0.4 = shrub/grassland ; -0.1 - 0.1 = roccia, sabbia, neve ; -1 = acqua ###
+
+## Palette colori ##
+
+col_ndvi <- colorRampPalette(c("black", "brown", "green", "darkgreen")) (100)
+
+### 2017 ###
+ndvi_2017_a <- (b8_17_ndvi_a - b4_17_ndvi_a) / (b8_17_ndvi_a + b4_17_ndvi_a)
+plot(ndvi_2017_a, col = col_ndvi, main = "NDVI 2017 Aprile")
+
+### 2019 ###
+
+ndvi_2019_a <- (b8_19_ndvi_a - b4_19_ndvi_a) / (b8_19_ndvi_a + b4_19_ndvi_a)
+plot(ndvi_2019_a, col = col_ndvi, main = "NDVI 2019 Aprile")
+
+### 2021 ###
+
+ndvi_2021_a <- (b8_21_ndvi_a - b4_21_ndvi_a) / (b8_21_ndvi_a + b4_21_ndvi_a)
+plot(ndvi_2021_a, col = col_ndvi, main = "NDVI 2021 Aprile")
+
+### 2023 ###
+
+ndvi_2023_a <- (b8_23_ndvi_a - b4_23_ndvi_a) / (b8_23_ndvi_a + b4_23_ndvi_a)
+plot(ndvi_2023_a, col = col_ndvi, main = "NDVI 2023 Aprile")
+
+par(mfrow=c(2,2), oma=c(3,3,3,3))
+
+plot(ndvi_2017_a, col = col_ndvi, main = "NDVI 2017")
+plot(ndvi_2019_a, col = col_ndvi, main = "NDVI 2019")
+plot(ndvi_2021_a, col = col_ndvi, main = "NDVI 2021")
+plot(ndvi_2023_a, col = col_ndvi, main = "NDVI 2023")
+
+
+#### FINE NDVI PERIODO PRIMAVERILE ####
+
+#### NDMI PERIODO PRIMAVERILE ####
+wd_ndmi_a = setwd("C:/Users/alber/Documents/Uni/Da fare/Tele/Progetto/NDMI_APRILE")
+
+### CARICO BANDE per NDMI (8A - 811)/(8A+811) ###
+
+wd_ndmi_a
+
+#2017#
+
+b8a_17_a <- rast("NDMI_3_4_2017/2017-04-03-00_00_2017-04-03-23_59_Sentinel-2_L2A_B8A_(Raw).tiff")
+b11_17_a <- rast("NDMI_3_4_2017/2017-04-03-00_00_2017-04-03-23_59_Sentinel-2_L2A_B11_(Raw).tiff")
+
+#2019#
+
+b8a_19_a <- rast("NDMI_3_4_2019/2019-04-03-00_00_2019-04-03-23_59_Sentinel-2_L2A_B8A_(Raw).tiff")
+b11_19_a <- rast("NDMI_3_4_2019/2019-04-03-00_00_2019-04-03-23_59_Sentinel-2_L2A_B11_(Raw).tiff")
+
+#2021#
+
+b8a_21_a <- rast("NDMI_7_4_2021/2021-04-07-00_00_2021-04-07-23_59_Sentinel-2_L2A_B8A_(Raw).tiff")
+b11_21_a <- rast("NDMI_7_4_2021/2021-04-07-00_00_2021-04-07-23_59_Sentinel-2_L2A_B11_(Raw).tiff")
+
+#2023#
+
+b8a_23_a <- rast("NDMI_12_4_2023/2023-04-12-00_00_2023-04-12-23_59_Sentinel-2_L2A_B8A_(Raw).tiff")
+b11_23_a <- rast("NDMI_12_4_2023/2023-04-12-00_00_2023-04-12-23_59_Sentinel-2_L2A_B11_(Raw).tiff")
+
+### NDMI ###
+
+## Palette colori ##
+
+col_ndmi <- colorRampPalette(c("black", "green", "red", "darkred")) (100)
+
+### 2017 ###
+ndmi_2017_a <- (b8a_17_a - b11_17_a) / (b8a_17_a + b11_17_a)
+plot(ndmi_2017_a, col = col_ndmi, main = "NDMI 2017 Aprile")
+
+### 2019 ###
+
+ndmi_2019_a <- (b8a_19_a - b11_19_a) / (b8a_19_a + b11_19_a)
+plot(ndmi_2019_a, col = col_ndmi, main = "NDMI 2019 Aprile")
+
+### 2021 ###
+
+ndmi_2021_a <- (b8a_21_a - b11_21_a) / (b8a_21_a + b11_21_a)
+plot(ndmi_2021_a, col = col_ndmi, main = "NDMI 2021 Aprile")
+
+
+### 2023 ###
+
+ndmi_2023_a <- (b8a_23_a - b11_23_a) / (b8a_23_a + b11_23_a)
+plot(ndmi_2023_a, col = col_ndmi, main = "NDMI 2023 Aprile")
+
+
+### confronto ndmi ###
+
+par(mfrow=c(2,2), oma=c(3,3,3,3))
+plot(ndmi_2017_a, col = col_ndmi, main = "NDMI 2017 Aprile")
+plot(ndmi_2019_a, col = col_ndmi, main = "NDMI 2019 Aprile")
+plot(ndmi_2021_a, col = col_ndmi, main = "NDMI 2021 Aprile")
+plot(ndmi_2023_a, col = col_ndmi, main = "NDMI 2023 Aprile")
+
+
+#### FINE NDMI PERIODO PRIMAVERILE ####
+
+
+
+#### ANALISI TRA DIFFERENTI PERIODI DELL'ANNO ####
+
+#### NDSI ANALISI PERIODO INVERNALE DA 2017 - 2019 - 2021 - 2023 ####
+
+
+snow <- c(ndsi_2017,ndsi_2020,ndsi_2021,ndsi_2023)
+plot(snow, col = col_ndsi)
+
+
+dif_snow_1 <- snow[[1]]-snow[[2]] # 2017 - 2019
+dif_snow_2 <- snow[[1]]-snow[[3]] # 2017 - 2021
+dif_snow_3 <- snow[[1]]-snow[[4]] # 2017 - 2023
+
+dif_col = colorRampPalette(c("black","grey","white"))(6)
+par(mfrow=c(1,3))
+
+plot(dif_snow_1, col= dif_col, main = " Dif 2017 - 2019")
+plot(dif_snow_2, col= dif_col, main = " Dif 2017 - 2021")
+plot(dif_snow_3, col= dif_col, main = " Dif 2017 - 2023")
+
+dev.off()
+
+#### ANALISI PERIODO ESTIVO ####
+
+#### NDVI ANALISI PERIODO ESTIVO DA 2017 - 2019 - 2021 -2023 ####
+
+# resample e crop per avere immagini uguali per fare vettore #
+
+ext(ndvi_2017_g)
+ext(ndvi_2019_g)
+ext(ndvi_2021_g)
+ext(ndvi_2023_g)
+ext_common <- ext(ndvi_2017_g)
+ndvi_2019_g <- crop(ndvi_2019_g, ext_common)
+ndvi_2021_g <- crop(ndvi_2021_g, ext_common)
+ndvi_2023_g <- crop(ndvi_2023_g, ext_common)
+ndvi_2019_g <- resample(ndvi_2019_g, ndvi_2017_g)
+ndvi_2021_g <- resample(ndvi_2021_g, ndvi_2017_g)
+ndvi_2023_g <- resample(ndvi_2023_g, ndvi_2017_g)
+
+# analisi #
+
+ndvi_estivo <- c(ndvi_2017_g,ndvi_2019_g,ndvi_2021_g,ndvi_2023_g)
+plot(ndvi_estivo, col = col_ndvi)
+
+dif_ndvi_estivo_1 <- ndvi_estivo[[4]] - ndvi_estivo[[1]]  # 2023 - 2017
+dif_ndvi_estivo_2 <- ndvi_estivo[[4]] - ndvi_estivo[[2]]  # 2023 - 2019
+dif_ndvi_estivo_3 <- ndvi_estivo[[4]] - ndvi_estivo[[3]]  # 2023 - 2021
+
+dif_col_ndvi = colorRampPalette(c("black","white","darkgreen"))(6)
+
+par(mfrow=c(1,3))
+
+plot(dif_ndvi_estivo_1, col= dif_col_ndvi, main = "Dif 2023 - 2017")
+plot(dif_ndvi_estivo_2, col= dif_col_ndvi, main = "Dif 2023 - 2019")
+plot(dif_ndvi_estivo_3, col= dif_col_ndvi, main = "Dif 2023 - 2021")
+
+dev.off()
+
+#### NDMI ANALISI PERIODO ESTIVO DA 2017 - 2019 - 2021 -2023 ####
+
+ndmi_estivo_g <- c(ndmi_2017_g,ndmi_2019_g,ndmi_2021_g,ndmi_2023_g)
+plot(ndmi_estivo_g, col = col_ndmi)
+
+dif_ndmi_giugno_1 <- ndmi_estivo_g[[1]] - ndmi_estivo_g[[2]] # 2017 - 2019
+dif_ndmi_giugno_2 <- ndmi_estivo_g[[1]] - ndmi_estivo_g[[3]] # 2017 - 2021
+dif_ndmi_giugno_3 <- ndmi_estivo_g[[1]] - ndmi_estivo_g[[4]] # 2017 - 2023
+
+par(mfrow=c(1,3))
+plot(dif_ndmi_giugno_1, col = dif_col_ndmi, main = "NDMI 2017 - 2019 GIUGNO")
+plot(dif_ndmi_giugno_2, col = dif_col_ndmi, main = "NDMI 2017 - 2021 GIUGNO")
+plot(dif_ndmi_giugno_3, col = dif_col_ndmi, main = "NDMI 2017 - 2023 GIUGNO")
+
+dev.off()
+
+#### FINE ANALISI PERIODO ESTIVO ####
+
+
+
+#### ANALISI PERIODO PRIMAVERILE ####
+
+#### NDVI ANALISI PERIODO PRIMAVERILE DA 2017 - 2019 - 2021 -2023 ####
+
+# analisi #
+
+ndvi_aprile <- c(ndvi_2017_a,ndvi_2019_a,ndvi_2021_a,ndvi_2023_a)
+plot(ndvi_aprile, col = col_ndvi)
+#pare che negli anni dal 2017 al 2023 nel periodo primaverile ci sia un aumento di copertura vegetazionale, esclusivamente erbacea
+
+dif_ndvi_aprile_1 <- ndvi_aprile[[4]] - ndvi_aprile[[1]]  # 2023 - 2017
+dif_ndvi_aprile_2 <- ndvi_aprile[[4]] - ndvi_aprile[[2]]  # 2023 - 2019
+dif_ndvi_aprile_3 <- ndvi_aprile[[4]] - ndvi_aprile[[3]]  # 2023 - 2021
+
+dif_col_ndvi = colorRampPalette(c("black","white","darkgreen"))(6)
+
+par(mfrow=c(1,3))
+
+plot(dif_ndvi_aprile_1, col= dif_col_ndvi, main = "Dif 2023 - 2017")
+plot(dif_ndvi_aprile_2, col= dif_col_ndvi, main = "Dif 2023 - 2019")
+plot(dif_ndvi_aprile_3, col= dif_col_ndvi, main = "Dif 2023 - 2021")
+# sottraendo dal 2023 gli anni precedenti si vede un aumento di copertura vegetazionale
+
+dev.off()
+
+#### NDMI ANALISI PERIODO PRIMAVERILE DA 2017 - 2019 - 2021 -2023 ####
+
+# analisi #
+
+ndmi_aprile <- c(ndmi_2017_a,ndmi_2019_a,ndmi_2021_a,ndmi_2023_a)
+plot(ndmi_aprile, col = col_ndmi)
+
+# si nota come dal 2017 al 2023 ci siano molte più zone stressate, si notano meno zone rosse ovvero zone in cui non c'è water stress
+
+dif_ndmi_aprile_1 <- ndmi_aprile[[1]] - ndmi_aprile[[2]]  # 2017 - 2019
+dif_ndmi_aprile_2 <- ndmi_aprile[[1]] - ndmi_aprile[[3]]  # 2017 - 2021
+dif_ndmi_aprile_3 <- ndmi_aprile[[1]] - ndmi_aprile[[4]]  # 2017 - 2023
+
+dif_col_ndmi = colorRampPalette(c("black","green","red"))(6)
+
+par(mfrow=c(1,3))
+
+plot(dif_ndmi_aprile_1, col= dif_col_ndmi, main = "Dif 2017 - 2019")
+plot(dif_ndmi_aprile_2, col= dif_col_ndmi, main = "Dif 2017 - 2021")
+plot(dif_ndmi_aprile_3, col= dif_col_ndmi, main = "Dif 2017 - 2023")
+
+# qui si nota un aumento del terreno sterile o che ha un certo valore di water stress dal 2017 fino al 2023 ( la zona rossa indica quello)
+
+dev.off()
+
+#### CONCLUSIONI PERIODO PRIMAVERILE ####
+# Si nota come è presente dal NDVI un aumento della copertura vegetazionale negli anni, principalmente erbacea MA
+# dall'analisi NDMI sullo stress per quanto concerne la presenza d'acqua nello stesso periodo si è visto un processo contrario
+# + copertura vegetazionale ma + water stress. Ipotesi: potrebbe essere che un aumento delle temperature incentivi specie erbacee occasionali
+# ma che aumenta lo stress idrico del terreno, probabilmente effetto degli ultimi decenni. Ipotizzo un drop nei prossimi anni per quanto riguarda
+# copertura vegetazionale andando ad aumentare il processo di desertificazione che stiamo vedendo negli ultimi anni in Mongolia siccome il suolo non è più
+# "idricamente robusto" tendente al secco e a non mantenere acqua nel tempo tra un periodo invernale nevoso e uno estivo
+
+# si parla di esclusivamente piante erbacee che non indicano una stabilità vegetazionale, potrebbe quindi NDVI non essere un indice ottimale per il problema
+# PER QUESTO SI PROVANO VARI INDICI
+
+#### FINE ANALISI PERIODO PRIMAVERILE
+
+
+
+####FINE PROGETTO####

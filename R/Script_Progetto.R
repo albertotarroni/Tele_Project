@@ -1,10 +1,10 @@
 library(terra)
 library(imageRy)
-
+library(viridis)
 
 #### NDSI (Indice copertura nevosa) ####
 
-wd_ndsi <- setwd("C:/Users/alber/Documents/Uni/Da fare/Tele/Progetto/NDSI_DICEMBRE")
+wd_ndsi <- setwd("C:/Users/alber/Documents/Uni/Da fare/Tele_Windows/Progetto/NDSI_DICEMBRE")
 
 ### ANALISI INVERNALE ANNO 2017 - 2019(20) - 2021 - 2023 ###
 
@@ -43,21 +43,21 @@ b11_23 <- rast("NDSI_23_12_2023/2023-12-23-00_00_2023-12-23-23_59_Sentinel-2_L2A
 #2017#
 
 true_color_2017 <- c(b4_17,b3_17,b2_17)
-tc_17 <- plotRGB(true_color_2017, 1, 2, 3, main = "True_Color_24_12_17_BU")
+tc_17 <- plotRGB(true_color_2017, 1, 2, 3, main = "True Color 24/12/17 Bayan-Unjuul")
 
 #2020#
 
 true_color_2020 <- c(b4_20,b3_20,b2_20)
-tc_20 <- plotRGB(true_color_2020, 1, 2, 3, main = "True_Color_08_01_20_BU")
+tc_20 <- plotRGB(true_color_2020, 1, 2, 3, main = "True Color 08/01/20 Bayan-Unjuul")
 
 #2021#
 
 true_color_2021 <- c(b4_21,b3_21,b2_21)
-tc_21 <- plotRGB(true_color_2021, 1, 2, 3, main = "True_Color_13_12_21_BU")
+tc_21 <- plotRGB(true_color_2021, 1, 2, 3, main = "True Color 13/12/21 Bayan-Unjuul")
 
 #2023#
 true_color_2023 <- c(b4_23,b3_23,b2_23)
-tc_23 <- plotRGB(true_color_2023, 1, 2, 3, main = "True_Color_23_12_23_BU")
+tc_23 <- plotRGB(true_color_2023, 1, 2, 3, main = "True Color 23/12/23 Bayan-Unjuul")
 
 
 par(mfrow=c(2,2), oma=c(3,3,3,3))
@@ -72,32 +72,82 @@ dev.off()
 
 ## Palette colori ##
 
-col_ndsi <- colorRampPalette(c("black", "brown", "grey", "white")) (100)
+col_ndsi <- colorRampPalette(c("black", "brown", "white", "darkblue")) (100)
 
 ### 2017 ###
 ndsi_2017 <- (b3_17 - b11_17) / (b3_17 + b11_17)
-plot(ndsi_2017, col = cl, main = "NDSI 2017")
+plot(ndsi_2017, col = col_ndsi, main = "NDSI 2017 Inverno")
 
 ### 2020 ###
 ndsi_2020 <- (b3_20 - b11_20) / (b3_20 + b11_20)
-plot(ndsi_2020, col = cl, main = "NDSI 2020")
+plot(ndsi_2020, col = col_ndsi, main = "NDSI 2020 Inverno")
 
 ### 2021 ###
 ndsi_2021 <- (b3_21 - b11_21) / (b3_21 + b11_21)
-plot(ndsi_2021, col = cl, main = "NDSI 2021")
+plot(ndsi_2021, col = col_ndsi, main = "NDSI 2021 Inverno")
 
 ### 2023 ###
 
 ndsi_2023 <- (b3_23 - b11_23) / (b3_23 + b11_23)
-plot(ndsi_2023, col = cl, main = "NDSI 2023")
+plot(ndsi_2023, col = col_ndsi, main = "NDSI 2023 Inverno")
 
 par(mfrow=c(2,2), oma=c(3,3,3,3))
-plot(ndsi_2017, col = cl, main = "NDSI 2017")
-plot(ndsi_2020, col = cl, main = "NDSI 2020")
-plot(ndsi_2021, col = cl, main = "NDSI 2021")
-plot(ndsi_2023, col = cl, main = "NDSI 2023")
+plot(ndsi_2017, col = col_ndsi, main = "NDSI 2017 Inverno")
+plot(ndsi_2020, col = col_ndsi, main = "NDSI 2020 Inverno")
+plot(ndsi_2021, col = col_ndsi, main = "NDSI 2021 Inverno")
+plot(ndsi_2023, col = col_ndsi, main = "NDSI 2023 Inverno")
 
 dev.off()
+
+ndsi_sd_17 <- focal(ndsi_2017, w = matrix(1/169,13,13), fun = sd)
+plot(ndsi_sd_17, col = col_ndsi, main = "Dev Stand 17")
+
+ndsi_sd_20 <- focal(ndsi_2020, w = matrix(1/169,13,13), fun = sd)
+plot(ndsi_sd_20, col = col_ndsi, main = "Dev Stand 20")
+
+ndsi_sd_21 <- focal(ndsi_2021, w = matrix(1/169,13,13), fun = sd)
+plot(ndsi_sd_21, col = col_ndsi, main = "Dev Stand 21")
+
+ndsi_sd_23 <- focal(ndsi_2023, w = matrix(1/169,13,13), fun = sd)
+plot(ndsi_sd_23, col = col_ndsi, main = "Dev Stand 23")
+
+years <- c(2017, 2020, 2021, 2023)
+means <- c(mean(ndsi_sd_17[], na.rm = TRUE), mean(ndsi_sd_20[], na.rm = TRUE),
+           mean(ndsi_sd_21[], na.rm = TRUE), mean(ndsi_sd_23[], na.rm = TRUE))
+sds <- c(sd(ndsi_sd_17[], na.rm = TRUE), sd(ndsi_sd_20[], na.rm = TRUE),
+         sd(ndsi_sd_21[], na.rm = TRUE), sd(ndsi_sd_23[], na.rm = TRUE))
+
+barplot(means, names.arg = years, ylim = c(0, max(means + sds)), 
+        main = "Media NDSI con Deviazione Standard", ylab = "Valori NDSI", col = "lightblue")
+
+barplot(means, names.arg = years, ylim = c(0, max(means + sds)), 
+        main = "Media NDSI con Deviazione Standard", ylab = "Valori NDSI", col = c("lightblue","lightblue","lightblue","red"))
+
+#### NDSI ANALISI PERIODO INVERNALE DA 2017 - 2019 - 2021 - 2023 ####
+
+
+snow <- c(ndsi_2017,ndsi_2020,ndsi_2021,ndsi_2023)
+plot(snow, col = col_ndsi)
+
+#### ANALISI PCA NDSI ####
+ndsi_pca <- im.pca(snow)
+
+plot(ndsi_pca, col = viridis(100))
+
+
+dif_snow_1 <- snow[[1]]-snow[[2]] # 2017 - 2019
+dif_snow_2 <- snow[[1]]-snow[[3]] # 2017 - 2021
+dif_snow_3 <- snow[[1]]-snow[[4]] # 2017 - 2023
+
+dif_col = colorRampPalette(c("black","grey","white"))(6)
+par(mfrow=c(1,3))
+
+plot(dif_snow_1, col= dif_col, main = " Dif 2017 - 2019")
+plot(dif_snow_2, col= dif_col, main = " Dif 2017 - 2021")
+plot(dif_snow_3, col= dif_col, main = " Dif 2017 - 2023")
+
+dev.off()
+
 
 #### FINE NDSI (Indice copertura nevosa) ####
 
@@ -105,7 +155,11 @@ dev.off()
 
 #### NDVI (Indice normalizzato Copertura Vegetazionale) ESTIVO ####
 
-wd_ndvi_g <- setwd("C:/Users/alber/Documents/Uni/Da fare/Tele/Progetto/NDVI_GIUGNO")
+
+
+#### NDVI (Indice normalizzato Copertura Vegetazionale) ESTIVO ####
+
+wd_ndvi_g <- setwd("C:/Users/alber/Documents/Uni/Da fare/Tele_Windows/Progetto/NDVI_GIUGNO")
 
 ### GIUGNO (estivo) ###
 
@@ -145,22 +199,22 @@ b8_23_ndvi <- rast("NDVI_21_6_2023/2023-06-21-00_00_2023-06-21-23_59_Sentinel-2_
 #2017#
 
 tc_17_ndvi_g <- c(b4_17_ndvi,b3_17_ndvi,b2_17_ndvi)
-plot_tc_17_g <- plotRGB(tc_17_ndvi_g, 1, 2, 3, main = "True_Color_02_06_17_BU")
+plot_tc_17_g <- plotRGB(tc_17_ndvi_g, 1, 2, 3, main = "True Color 02/06/17 Bayan-Unjuul")
 
 #2019#
 
 tc_19_ndvi_g <- c(b4_19_ndvi,b3_19_ndvi,b2_19_ndvi)
-plot_tc_19_g <- plotRGB(tc_19_ndvi_g, 1, 2, 3, main = "True_Color_07_06_19_BU")
+plot_tc_19_g <- plotRGB(tc_19_ndvi_g, 1, 2, 3, main = "True Color 07/06/19 Bayan-Unjuul")
 
 #2021#
 
 tc_21_ndvi_g <- c(b4_21_ndvi,b3_21_ndvi,b2_21_ndvi)
-plot_tc_21_g <- plotRGB(tc_21_ndvi_g, 1, 2, 3, main = "True_Color_21_06_21_BU")
+plot_tc_21_g <- plotRGB(tc_21_ndvi_g, 1, 2, 3, main = "True Color 21/06/21 Bayan-Unjuul")
 
 #2023#
 
 tc_23_ndvi_g <- c(b4_23_ndvi,b3_23_ndvi,b2_23_ndvi)
-plot_tc_23_g <- plotRGB(tc_23_ndvi_g, 1, 2, 3, main = "True_Color_26_06_23_BU")
+plot_tc_23_g <- plotRGB(tc_23_ndvi_g, 1, 2, 3, main = "True Color 26/06/23 Bayan-Unjuul")
 
 
 ### CONFRONTO TRUE COLOR ###
@@ -180,7 +234,7 @@ dev.off()
 
 ## Palette colori ##
 
-col_ndvi <- colorRampPalette(c("black", "brown", "green", "darkgreen")) (100)
+col_ndvi <- colorRampPalette(c("black", "grey", "green", "darkgreen")) (100)
 
 ### 2017 ###
 ndvi_2017_g <- (b8_17_ndvi - b4_17_ndvi) / (b8_17_ndvi + b4_17_ndvi)
@@ -204,18 +258,48 @@ plot(ndvi_2023_g, col = col_ndvi, main = "NDVI 2023 Giugno")
 
 ### CONFRONTO NDVI ESTATE ###
 par(mfrow=c(2,2), oma=c(3,3,3,3))
-plot(ndvi_2017_g, col = col_ndvi, main = "NDVI 2017")
-plot(ndvi_2019_g, col = col_ndvi, main = "NDVI 2019")
-plot(ndvi_2021_g, col = col_ndvi, main = "NDVI 2021")
-plot(ndvi_2023_g, col = col_ndvi, main = "NDVI 2023")
+plot(ndvi_2017_g, col = col_ndvi, main = "NDVI 2017 Giugno")
+plot(ndvi_2019_g, col = col_ndvi, main = "NDVI 2019 Giugno")
+plot(ndvi_2021_g, col = col_ndvi, main = "NDVI 2021 Giugno")
+plot(ndvi_2023_g, col = col_ndvi, main = "NDVI 2023 Giugno")
 
 dev.off()
+
+## NDVI DEVIAZIONE STANDARD ESTIVO ##
+
+par(mfrow=c(2,2))
+ndvi_sd_17_g <- focal(ndvi_2017_g, w = matrix(1/169,13,13), fun = sd)
+plot(ndvi_sd_17_g, col = col_ndvi, main = "Dev Stand 17")
+
+ndvi_sd_19_g <- focal(ndvi_2019_g, w = matrix(1/169,13,13), fun = sd)
+plot(ndvi_sd_19_g, col = col_ndvi, main = "Dev Stand 19")
+
+ndvi_sd_21_g <- focal(ndvi_2021_g, w = matrix(1/169,13,13), fun = sd)
+plot(ndvi_sd_21_g, col = col_ndvi, main = "Dev Stand 21")
+
+ndvi_sd_23_g <- focal(ndvi_2023_g, w = matrix(1/169,13,13), fun = sd)
+plot(ndvi_sd_23_g, col = col_ndvi, main = "Dev Stand 23")
+
+dev.off()
+years <- c(2017, 2019, 2021, 2023)
+means_ndvi_g <- c(mean(ndvi_sd_17_g[], na.rm = TRUE), mean(ndvi_sd_19_g[], na.rm = TRUE),
+           mean(ndvi_sd_21_g[], na.rm = TRUE), mean(ndvi_sd_23_g[], na.rm = TRUE))
+sds_ndvi <- c(sd(ndvi_sd_17_g[], na.rm = TRUE), sd(ndvi_sd_19_g[], na.rm = TRUE),
+         sd(ndvi_sd_21_g[], na.rm = TRUE), sd(ndvi_sd_23_g[], na.rm = TRUE))
+
+barplot(means_ndvi_g, names.arg = years, ylim = c(0, max(means_ndvi_g + sds_ndvi)), 
+        main = "Media NDVI con Deviazione Standard Giugno", ylab = "Valori NDVI", col = "lightblue")
+
+barplot(means_ndvi_g, names.arg = years, ylim = c(0, max(means_ndvi_g + sds_ndvi)), 
+        main = "Media NDVI con Deviazione Standard Giugno", ylab = "Valori NDVI", col = c("lightblue","lightblue","red","red"))
+
+
 
 #### FINE NDVI ESTIVO ####
 
 #### NDMI ESTIVO ####
 
-wd_ndmi_g <- setwd("C:/Users/alber/Documents/Uni/Da fare/Tele/Progetto/NDMI_GIUGNO")
+wd_ndmi_g <- setwd("C:/Users/alber/Documents/Uni/Da fare/Tele_Windows/Progetto/NDMI_GIUGNO")
 
 ### GIUGNO ###
 
@@ -243,6 +327,8 @@ ndmi_2019_g <- (b8a_19_g - b11_19_g) / (b8a_19_g + b11_19_g)
 ndmi_2021_g <- (b8a_21_g - b11_21_g) / (b8a_21_g + b11_21_g)
 ndmi_2023_g <- (b8a_23_g - b11_23_g) / (b8a_23_g + b11_23_g)
 
+col_ndmi <- colorRampPalette(c("black", "white", "red", "darkred")) (100)
+
 #CONFRONTO#
 par(mfrow= c(2,2))
 plot(ndmi_2017_g, col = col_ndmi, main = " NDMI 2017 GIUGNO")
@@ -250,15 +336,109 @@ plot(ndmi_2019_g, col = col_ndmi, main = " NDMI 2019 GIUGNO")
 plot(ndmi_2021_g, col = col_ndmi, main = " NDMI 2021 GIUGNO")
 plot(ndmi_2023_g, col = col_ndmi, main = " NDMI 2023 GIUGNO")
 
+dev.off()
 # confrontando ad occhio pare che lo stress negli anni diminuisca ma il dato da tener conto è che si parla di valori max a 0.4 ovvero in pieno stress
 # o tendente allo stress idrico, non mi figuro una stabilità idrica nel suolo, mi pare sempre un sistema tendente all'instabilità
 # potrebbe darsi che nel 2023 a giugno sia piovuto particolarmente o proprio in quella occasione
 # DA APPROFONDIRE
 
+## DEVIAZIONE STANDARD NDMI ESTIVO ##
+par(mfrow=c(2,2))
+ndmi_sd_17_g <- focal(ndmi_2017_g, w = matrix(1/169,13,13), fun = sd)
+plot(ndmi_sd_17_g, col = col_ndmi, main = "Dev Stand 17")
+
+ndmi_sd_19_g <- focal(ndmi_2019_g, w = matrix(1/169,13,13), fun = sd)
+plot(ndmi_sd_19_g, col = col_ndmi, main = "Dev Stand 19")
+
+ndmi_sd_21_g <- focal(ndmi_2021_g, w = matrix(1/169,13,13), fun = sd)
+plot(ndmi_sd_21_g, col = col_ndmi, main = "Dev Stand 21")
+
+ndmi_sd_23_g <- focal(ndmi_2023_g, w = matrix(1/169,13,13), fun = sd)
+plot(ndmi_sd_23_g, col = col_ndmi, main = "Dev Stand 23")
+
+years_ndmi <- c(2017, 2019, 2021, 2023)
+means_ndmi_g <- c(mean(ndmi_sd_17_g[], na.rm = TRUE), mean(ndmi_sd_19_g[], na.rm = TRUE),
+                  mean(ndmi_sd_21_g[], na.rm = TRUE), mean(ndmi_sd_23_g[], na.rm = TRUE))
+sds_ndmi <- c(sd(ndmi_sd_17_g[], na.rm = TRUE), sd(ndmi_sd_19_g[], na.rm = TRUE),
+              sd(ndmi_sd_21_g[], na.rm = TRUE), sd(ndmi_sd_23_g[], na.rm = TRUE))
+
+barplot(means_ndmi_g, names.arg = years, ylim = c(0, max(means_ndmi_g + sds_ndmi)), 
+        main = "Media NDMI con Deviazione Standard Giugno", ylab = "Valori NDMI", col = "lightblue")
+barplot(means_ndmi_g, names.arg = years, ylim = c(0, max(means_ndmi_g + sds_ndmi)), 
+        main = "Media NDMI con Deviazione Standard Giugno", ylab = "Valori NDMI", col = c("lightblue","lightblue","red","red"))
+
+
+
+#### ANALISI PERIODO ESTIVO ####
+
+#### NDVI ANALISI PERIODO ESTIVO DA 2017 - 2019 - 2021 -2023 ####
+
+# resample e crop per avere immagini uguali per fare vettore #
+
+ext(ndvi_2017_g)
+ext(ndvi_2019_g)
+ext(ndvi_2021_g)
+ext(ndvi_2023_g)
+ext_common <- ext(ndvi_2017_g)
+ndvi_2019_g <- crop(ndvi_2019_g, ext_common)
+ndvi_2021_g <- crop(ndvi_2021_g, ext_common)
+ndvi_2023_g <- crop(ndvi_2023_g, ext_common)
+ndvi_2019_g <- resample(ndvi_2019_g, ndvi_2017_g)
+ndvi_2021_g <- resample(ndvi_2021_g, ndvi_2017_g)
+ndvi_2023_g <- resample(ndvi_2023_g, ndvi_2017_g)
+
+# analisi #
+
+ndvi_estivo <- c(ndvi_2017_g,ndvi_2019_g,ndvi_2021_g,ndvi_2023_g)
+plot(ndvi_estivo, col = col_ndvi)
+
+####  PCA ANALISI NDVI ESTIVO ####
+
+ndvi_g_pca <- im.pca(ndvi_estivo)
+plot(ndvi_g_pca, col = viridis(100))
+
+
+dif_ndvi_estivo_1 <- ndvi_estivo[[4]] - ndvi_estivo[[1]]  # 2023 - 2017
+dif_ndvi_estivo_2 <- ndvi_estivo[[4]] - ndvi_estivo[[2]]  # 2023 - 2019
+dif_ndvi_estivo_3 <- ndvi_estivo[[4]] - ndvi_estivo[[3]]  # 2023 - 2021
+
+dif_col_ndvi = colorRampPalette(c("black","white","darkgreen"))(6)
+
+par(mfrow=c(1,3))
+
+plot(dif_ndvi_estivo_1, col= dif_col_ndvi, main = "Dif 2023 - 2017")
+plot(dif_ndvi_estivo_2, col= dif_col_ndvi, main = "Dif 2023 - 2019")
+plot(dif_ndvi_estivo_3, col= dif_col_ndvi, main = "Dif 2023 - 2021")
+
+dev.off()
+
+#### NDMI ANALISI PERIODO ESTIVO DA 2017 - 2019 - 2021 -2023 ####
+
+ndmi_estivo_g <- c(ndmi_2017_g,ndmi_2019_g,ndmi_2021_g,ndmi_2023_g)
+plot(ndmi_estivo_g, col = col_ndmi)
+
+#### ANALISI PCA NDMI ESTIVO ####
+ndmi_g_pca <- im.pca(ndmi_estivo_g)
+plot(ndmi_g_pca, col = viridis(100))
+
+
+dif_ndmi_giugno_1 <- ndmi_estivo_g[[1]] - ndmi_estivo_g[[2]] # 2017 - 2019
+dif_ndmi_giugno_2 <- ndmi_estivo_g[[1]] - ndmi_estivo_g[[3]] # 2017 - 2021
+dif_ndmi_giugno_3 <- ndmi_estivo_g[[1]] - ndmi_estivo_g[[4]] # 2017 - 2023
+
+par(mfrow=c(1,3))
+plot(dif_ndmi_giugno_1, col = dif_col_ndmi, main = "NDMI 2017 - 2019 GIUGNO")
+plot(dif_ndmi_giugno_2, col = dif_col_ndmi, main = "NDMI 2017 - 2021 GIUGNO")
+plot(dif_ndmi_giugno_3, col = dif_col_ndmi, main = "NDMI 2017 - 2023 GIUGNO")
+
+dev.off()
+
+#### FINE ANALISI PERIODO ESTIVO ####
+
 #### ANALISI TRANSIZIONE INVERNO - ESTATE ####
 
 
-wd_ndvi_a <- setwd("C:/Users/alber/Documents/Uni/Da fare/Tele/Progetto/NDVI_APRILE")
+wd_ndvi_a <- setwd("C:/Users/alber/Documents/Uni/Da fare/Tele_Windows/Progetto/NDVI_APRILE")
 
 ### APRILE (primaverile) ###
 
@@ -315,7 +495,7 @@ b2_17_ndvi_a_stretch <- stretch(b2_17_ndvi_a)
 tc_17_ndvi_a_stretch <- c(b4_17_ndvi_a_stretch, b3_17_ndvi_a_stretch, b2_17_ndvi_a_stretch)
 
 # Plot RGB con le bande stretchate
-plot_tc_17_a <- plotRGB(tc_17_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True_Color_03_04_17_BU")
+plot_tc_17_a <- plotRGB(tc_17_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True Color 03/04/17 Bayan-Unjuul")
 
 #2019#
 
@@ -328,7 +508,7 @@ b2_19_ndvi_a_stretch <- stretch(b2_19_ndvi_a)
 tc_19_ndvi_a_stretch <- c(b4_19_ndvi_a_stretch, b3_19_ndvi_a_stretch, b2_19_ndvi_a_stretch)
 
 # Plot RGB con le bande stretchate
-plot_tc_19_a <- plotRGB(tc_19_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True_Color_03_04_19_BU")
+plot_tc_19_a <- plotRGB(tc_19_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True Color 03/04/19 Bayan-Unjuul")
 
 
 #2021#
@@ -342,7 +522,7 @@ b2_21_ndvi_a_stretch <- stretch(b2_21_ndvi_a)
 tc_21_ndvi_a_stretch <- c(b4_21_ndvi_a_stretch, b3_21_ndvi_a_stretch, b2_21_ndvi_a_stretch)
 
 # Plot RGB con le bande stretchate
-plot_tc_21_a <- plotRGB(tc_21_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True_Color_07_04_21_BU")
+plot_tc_21_a <- plotRGB(tc_21_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True Color 07/04/21 Bayan-Unjuul")
 
 
 #2023#
@@ -356,7 +536,7 @@ b2_23_ndvi_a_stretch <- stretch(b2_23_ndvi_a)
 tc_23_ndvi_a_stretch <- c(b4_23_ndvi_a_stretch, b3_23_ndvi_a_stretch, b2_23_ndvi_a_stretch)
 
 # Plot RGB con le bande stretchate
-plot_tc_23_a <- plotRGB(tc_23_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True_Color_07_04_21_BU")
+plot_tc_23_a <- plotRGB(tc_23_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True Color 12/04/23 Bayan-Unjuul")
 
 ### CONFRONTO TRUE COLOR APRILE
 
@@ -365,7 +545,7 @@ par(mfrow=c(2,2), oma=c(3,3,3,3))
 plot_tc_17_a <- plotRGB(tc_17_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True_Color_03_04_17_BU")
 plot_tc_19_a <- plotRGB(tc_19_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True_Color_03_04_19_BU")
 plot_tc_21_a <- plotRGB(tc_21_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True_Color_07_04_21_BU")
-plot_tc_23_a <- plotRGB(tc_23_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True_Color_07_04_21_BU")
+plot_tc_23_a <- plotRGB(tc_23_ndvi_a_stretch, r = 1, g = 2, b = 3, scale = 255, main = "True_Color_12_04_23_BU")
 
 
 
@@ -374,10 +554,6 @@ dev.off()
 
 #### NDVI PERIODO PRIMAVERILE #### 
 ### NDVI 1 = temperate/tropicali ; 0.2 - 0.4 = shrub/grassland ; -0.1 - 0.1 = roccia, sabbia, neve ; -1 = acqua ###
-
-## Palette colori ##
-
-col_ndvi <- colorRampPalette(c("black", "brown", "green", "darkgreen")) (100)
 
 ### 2017 ###
 ndvi_2017_a <- (b8_17_ndvi_a - b4_17_ndvi_a) / (b8_17_ndvi_a + b4_17_ndvi_a)
@@ -405,11 +581,39 @@ plot(ndvi_2019_a, col = col_ndvi, main = "NDVI 2019")
 plot(ndvi_2021_a, col = col_ndvi, main = "NDVI 2021")
 plot(ndvi_2023_a, col = col_ndvi, main = "NDVI 2023")
 
+dev.off()
+
+## DEVIAZIONE STANDARD NDVI PRIMAVERA ##
+par(mfrow=c(2,2))
+ndvi_sd_17_a <- focal(ndvi_2017_a, w = matrix(1/169,13,13), fun = sd)
+plot(ndvi_sd_17_a, col = col_ndvi, main = "Dev Stand 17")
+
+ndvi_sd_19_a <- focal(ndvi_2019_a, w = matrix(1/169,13,13), fun = sd)
+plot(ndvi_sd_19_a, col = col_ndvi, main = "Dev Stand 19")
+
+ndvi_sd_21_a <- focal(ndvi_2021_a, w = matrix(1/169,13,13), fun = sd)
+plot(ndvi_sd_21_a, col = col_ndvi, main = "Dev Stand 21")
+
+ndvi_sd_23_a <- focal(ndvi_2023_a, w = matrix(1/169,13,13), fun = sd)
+plot(ndvi_sd_23_a, col = col_ndvi, main = "Dev Stand 23")
+
+dev.off()
+
+years_ndvi_a <- c(2017, 2019, 2021, 2023)
+means_ndvi_a <- c(mean(ndvi_sd_17_a[], na.rm = TRUE), mean(ndvi_sd_19_a[], na.rm = TRUE),
+                  mean(ndvi_sd_21_a[], na.rm = TRUE), mean(ndvi_sd_23_a[], na.rm = TRUE))
+sds_ndvi_a <- c(sd(ndvi_sd_17_a[], na.rm = TRUE), sd(ndvi_sd_19_a[], na.rm = TRUE),
+              sd(ndvi_sd_21_a[], na.rm = TRUE), sd(ndvi_sd_23_a[], na.rm = TRUE))
+
+barplot(means_ndvi_a, names.arg = years, ylim = c(0, max(means_ndvi_a + sds_ndvi_a)), 
+        main = "Media NDVI con Deviazione Standard Aprile", ylab = "Valori NDVI", col = "lightblue")
+
+
 
 #### FINE NDVI PERIODO PRIMAVERILE ####
 
 #### NDMI PERIODO PRIMAVERILE ####
-wd_ndmi_a = setwd("C:/Users/alber/Documents/Uni/Da fare/Tele/Progetto/NDMI_APRILE")
+wd_ndmi_a = setwd("C:/Users/alber/Documents/Uni/Da fare/Tele_Windows/Progetto/NDMI_APRILE")
 
 ### CARICO BANDE per NDMI (8A - 811)/(8A+811) ###
 
@@ -438,8 +642,6 @@ b11_23_a <- rast("NDMI_12_4_2023/2023-04-12-00_00_2023-04-12-23_59_Sentinel-2_L2
 ### NDMI ###
 
 ## Palette colori ##
-
-col_ndmi <- colorRampPalette(c("black", "green", "red", "darkred")) (100)
 
 ### 2017 ###
 ndmi_2017_a <- (b8a_17_a - b11_17_a) / (b8a_17_a + b11_17_a)
@@ -470,88 +672,33 @@ plot(ndmi_2019_a, col = col_ndmi, main = "NDMI 2019 Aprile")
 plot(ndmi_2021_a, col = col_ndmi, main = "NDMI 2021 Aprile")
 plot(ndmi_2023_a, col = col_ndmi, main = "NDMI 2023 Aprile")
 
-
-#### FINE NDMI PERIODO PRIMAVERILE ####
-
-
-
-#### ANALISI TRA DIFFERENTI PERIODI DELL'ANNO ####
-
-#### NDSI ANALISI PERIODO INVERNALE DA 2017 - 2019 - 2021 - 2023 ####
-
-
-snow <- c(ndsi_2017,ndsi_2020,ndsi_2021,ndsi_2023)
-plot(snow, col = col_ndsi)
-
-
-dif_snow_1 <- snow[[1]]-snow[[2]] # 2017 - 2019
-dif_snow_2 <- snow[[1]]-snow[[3]] # 2017 - 2021
-dif_snow_3 <- snow[[1]]-snow[[4]] # 2017 - 2023
-
-dif_col = colorRampPalette(c("black","grey","white"))(6)
-par(mfrow=c(1,3))
-
-plot(dif_snow_1, col= dif_col, main = " Dif 2017 - 2019")
-plot(dif_snow_2, col= dif_col, main = " Dif 2017 - 2021")
-plot(dif_snow_3, col= dif_col, main = " Dif 2017 - 2023")
-
 dev.off()
 
-#### ANALISI PERIODO ESTIVO ####
+## DEVIAZIONE STANDARD NDMI PRIMAVERA ##
+par(mfrow=c(2,2))
+ndmi_sd_17_a <- focal(ndmi_2017_a, w = matrix(1/169,13,13), fun = sd)
+plot(ndmi_sd_17_a, col = col_ndmi, main = "Dev Stand 17")
 
-#### NDVI ANALISI PERIODO ESTIVO DA 2017 - 2019 - 2021 -2023 ####
+ndmi_sd_19_a <- focal(ndmi_2019_a, w = matrix(1/169,13,13), fun = sd)
+plot(ndmi_sd_19_a, col = col_ndmi, main = "Dev Stand 19")
 
-# resample e crop per avere immagini uguali per fare vettore #
+ndmi_sd_21_a <- focal(ndmi_2021_a, w = matrix(1/169,13,13), fun = sd)
+plot(ndmi_sd_21_a, col = col_ndmi, main = "Dev Stand 21")
 
-ext(ndvi_2017_g)
-ext(ndvi_2019_g)
-ext(ndvi_2021_g)
-ext(ndvi_2023_g)
-ext_common <- ext(ndvi_2017_g)
-ndvi_2019_g <- crop(ndvi_2019_g, ext_common)
-ndvi_2021_g <- crop(ndvi_2021_g, ext_common)
-ndvi_2023_g <- crop(ndvi_2023_g, ext_common)
-ndvi_2019_g <- resample(ndvi_2019_g, ndvi_2017_g)
-ndvi_2021_g <- resample(ndvi_2021_g, ndvi_2017_g)
-ndvi_2023_g <- resample(ndvi_2023_g, ndvi_2017_g)
+ndmi_sd_23_a <- focal(ndmi_2023_a, w = matrix(1/169,13,13), fun = sd)
+plot(ndmi_sd_23_a, col = col_ndmi, main = "Dev Stand 23")
 
-# analisi #
 
-ndvi_estivo <- c(ndvi_2017_g,ndvi_2019_g,ndvi_2021_g,ndvi_2023_g)
-plot(ndvi_estivo, col = col_ndvi)
+years_ndmi_a <- c(2017, 2019, 2021, 2023)
+means_ndmi_a <- c(mean(ndmi_sd_17_a[], na.rm = TRUE), mean(ndmi_sd_19_a[], na.rm = TRUE),
+                  mean(ndvi_sd_21_a[], na.rm = TRUE), mean(ndmi_sd_23_a[], na.rm = TRUE))
+sds_ndmi_a <- c(sd(ndmi_sd_17_a[], na.rm = TRUE), sd(ndmi_sd_19_a[], na.rm = TRUE),
+                sd(ndmi_sd_21_a[], na.rm = TRUE), sd(ndmi_sd_23_a[], na.rm = TRUE))
 
-dif_ndvi_estivo_1 <- ndvi_estivo[[4]] - ndvi_estivo[[1]]  # 2023 - 2017
-dif_ndvi_estivo_2 <- ndvi_estivo[[4]] - ndvi_estivo[[2]]  # 2023 - 2019
-dif_ndvi_estivo_3 <- ndvi_estivo[[4]] - ndvi_estivo[[3]]  # 2023 - 2021
-
-dif_col_ndvi = colorRampPalette(c("black","white","darkgreen"))(6)
-
-par(mfrow=c(1,3))
-
-plot(dif_ndvi_estivo_1, col= dif_col_ndvi, main = "Dif 2023 - 2017")
-plot(dif_ndvi_estivo_2, col= dif_col_ndvi, main = "Dif 2023 - 2019")
-plot(dif_ndvi_estivo_3, col= dif_col_ndvi, main = "Dif 2023 - 2021")
-
-dev.off()
-
-#### NDMI ANALISI PERIODO ESTIVO DA 2017 - 2019 - 2021 -2023 ####
-
-ndmi_estivo_g <- c(ndmi_2017_g,ndmi_2019_g,ndmi_2021_g,ndmi_2023_g)
-plot(ndmi_estivo_g, col = col_ndmi)
-
-dif_ndmi_giugno_1 <- ndmi_estivo_g[[1]] - ndmi_estivo_g[[2]] # 2017 - 2019
-dif_ndmi_giugno_2 <- ndmi_estivo_g[[1]] - ndmi_estivo_g[[3]] # 2017 - 2021
-dif_ndmi_giugno_3 <- ndmi_estivo_g[[1]] - ndmi_estivo_g[[4]] # 2017 - 2023
-
-par(mfrow=c(1,3))
-plot(dif_ndmi_giugno_1, col = dif_col_ndmi, main = "NDMI 2017 - 2019 GIUGNO")
-plot(dif_ndmi_giugno_2, col = dif_col_ndmi, main = "NDMI 2017 - 2021 GIUGNO")
-plot(dif_ndmi_giugno_3, col = dif_col_ndmi, main = "NDMI 2017 - 2023 GIUGNO")
-
-dev.off()
-
-#### FINE ANALISI PERIODO ESTIVO ####
-
+barplot(means_ndmi_a, names.arg = years, ylim = c(0, max(means_ndmi_a + sds_ndmi_a)), 
+        main = "Media NDMI con Deviazione Standard Aprile", ylab = "Valori NDMI", col = "lightblue")
+barplot(means_ndmi_a, names.arg = years, ylim = c(0, max(means_ndmi_a + sds_ndmi_a)), 
+        main = "Media NDMI con Deviazione Standard Aprile", ylab = "Valori NDMI", col = c("lightblue","lightblue","lightblue","red"))
 
 
 #### ANALISI PERIODO PRIMAVERILE ####
@@ -562,6 +709,12 @@ dev.off()
 
 ndvi_aprile <- c(ndvi_2017_a,ndvi_2019_a,ndvi_2021_a,ndvi_2023_a)
 plot(ndvi_aprile, col = col_ndvi)
+
+## PCA NDVI PRIMAVERA ##
+
+ndvi_a_pca <- im.pca(ndvi_aprile)
+plot(ndvi_a_pca, col = viridis(100))
+
 #pare che negli anni dal 2017 al 2023 nel periodo primaverile ci sia un aumento di copertura vegetazionale, esclusivamente erbacea
 
 dif_ndvi_aprile_1 <- ndvi_aprile[[4]] - ndvi_aprile[[1]]  # 2023 - 2017
@@ -586,13 +739,18 @@ dev.off()
 ndmi_aprile <- c(ndmi_2017_a,ndmi_2019_a,ndmi_2021_a,ndmi_2023_a)
 plot(ndmi_aprile, col = col_ndmi)
 
+#### ANALISI PCA NDMI PRIMAVERA ####
+
+ndmi_a_pca <- im.pca(ndmi_aprile)
+plot(ndmi_a_pca, col = viridis(100))
+
 # si nota come dal 2017 al 2023 ci siano molte più zone stressate, si notano meno zone rosse ovvero zone in cui non c'è water stress
 
 dif_ndmi_aprile_1 <- ndmi_aprile[[1]] - ndmi_aprile[[2]]  # 2017 - 2019
 dif_ndmi_aprile_2 <- ndmi_aprile[[1]] - ndmi_aprile[[3]]  # 2017 - 2021
 dif_ndmi_aprile_3 <- ndmi_aprile[[1]] - ndmi_aprile[[4]]  # 2017 - 2023
 
-dif_col_ndmi = colorRampPalette(c("black","green","red"))(6)
+dif_col_ndmi = colorRampPalette(c("black","white","red"))(6)
 
 par(mfrow=c(1,3))
 
@@ -617,6 +775,8 @@ dev.off()
 
 #### FINE ANALISI PERIODO PRIMAVERILE
 
+
+#### FINE NDMI PERIODO PRIMAVERILE ####
 
 
 ####FINE PROGETTO####

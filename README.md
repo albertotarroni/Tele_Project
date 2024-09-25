@@ -1,7 +1,7 @@
 # Tele_Project
-Progetto di Telerilevamento sulla regione di Bayan-Unjuul.
+Progetto di Telerilevamento sulla regione di Bayan-Unjuul, zona centrale a S-E della capitale UlaanBataar.
 
-Si tratta di una analisi del territorio negli anni, in particolare nel 2017 , 2019, 2021, 2023
+Si tratta di una analisi del territorio negli anni, in particolare nel 2017 , 2019 (gennaio 2020 per periodo invernale), 2021, 2023
 
 L'analisi è stata fatta sul periodo Invernale , Estivo e Primaverile
 
